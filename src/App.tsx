@@ -1,19 +1,33 @@
-import { Button } from "@/components/ui/button"
+import { sampleRecipes } from './data/sampleRecipes'
+import {
+  countFavourites,
+  filterByCategory,
+  formatIngredient,
+  getTotalTime,
+} from './utils/recipeUtils'
 
+// Temporary check of the Step 2 types, data and utilities. Replaced in Step 3.
 function App() {
+  const firstRecipe = sampleRecipes[0]
+  const dinnerTitles = filterByCategory(sampleRecipes, 'dinner')
+    .map((recipe) => recipe.title)
+    .join(', ')
+
   return (
-    <main className="mx-auto flex min-h-svh max-w-xl flex-col items-center justify-center gap-6 p-6 text-center">
-      <h1 className="text-4xl font-semibold tracking-tight">Recipe Box</h1>
-      <p className="text-muted-foreground">
-        Your recipes, all in one cozy place.
+    <div>
+      <h1>Recipe Box</h1>
+      <p>Total recipes: {sampleRecipes.length}</p>
+      <p>Favourites: {countFavourites(sampleRecipes)}</p>
+      <p>
+        Total time of "{firstRecipe.title}": {getTotalTime(firstRecipe)} min
       </p>
-      <div className="flex flex-wrap justify-center gap-3">
-        <Button>Add recipe</Button>
-        <Button variant="secondary">Browse</Button>
-        <Button variant="outline">Favorites</Button>
-        <Button variant="destructive">Delete</Button>
-      </div>
-    </main>
+      <p>Dinner recipes: {dinnerTitles}</p>
+      <ul>
+        {firstRecipe.ingredients.map((ingredient) => (
+          <li key={ingredient.id}>{formatIngredient(ingredient)}</li>
+        ))}
+      </ul>
+    </div>
   )
 }
 
