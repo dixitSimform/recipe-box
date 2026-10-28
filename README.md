@@ -1,32 +1,52 @@
-# React + TypeScript + Vite
+# Recipe Box
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A recipe app built step by step as a learning project with React, TypeScript and Vite.
 
-Currently, two official plugins are available:
+**Current status:** Step 1 — project scaffold. The app renders a single "Recipe Box" heading. Features come in later steps.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech stack
 
-## React Compiler
+- [React](https://react.dev) 19
+- [TypeScript](https://www.typescriptlang.org)
+- [Vite](https://vite.dev) 8 with [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react)
+- [Oxlint](https://oxc.rs/docs/guide/usage/linter) for linting
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Requirements
 
-## Expanding the Oxlint configuration
+Node.js 20.19+ or 22.12+ (required by Vite 8).
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## Getting started
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Then open the local URL that Vite prints (usually http://localhost:5173).
+
+## Scripts
+
+| Command           | Description                                  |
+| ----------------- | -------------------------------------------- |
+| `npm run dev`     | Start the dev server with hot module reload  |
+| `npm run build`   | Type-check with `tsc` and build to `dist/`   |
+| `npm run lint`    | Lint the project with Oxlint                 |
+| `npm run preview` | Serve the production build locally           |
+
+## Project structure
+
+```
+recipe-box/
+├── index.html          # HTML entry point, loads src/main.tsx
+├── public/             # Static files served as-is
+└── src/
+    ├── main.tsx        # Mounts <App /> into #root
+    ├── App.tsx         # Top-level component
+    ├── index.css       # Global base styles
+    ├── App.css         # App styles (empty for now)
+    ├── components/     # Reusable UI components
+    ├── data/           # Recipe data
+    └── types/          # Shared TypeScript types
+```
+
+`components/`, `data/` and `types/` are empty for now (kept in Git with `.gitkeep`) and will be filled in later steps.
