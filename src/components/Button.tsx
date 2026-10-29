@@ -6,6 +6,7 @@ export type ButtonProps = {
   variant?: 'primary' | 'secondary' | 'danger'
   type?: 'button' | 'submit'
   disabled?: boolean
+  pressed?: boolean
 }
 
 export const Button = ({
@@ -14,12 +15,14 @@ export const Button = ({
   variant = 'primary',
   type = 'button',
   disabled = false,
+  pressed,
 }: ButtonProps): ReactElement => (
   <button
     type={type}
     className={`btn btn-${variant}`}
     onClick={onClick}
     disabled={disabled}
+    aria-pressed={pressed}
   >
     {children}
   </button>

@@ -130,6 +130,17 @@ body {
   color: var(--primary-foreground);
 }
 
+.summary {
+  margin: 0 0 1rem;
+  color: var(--muted-foreground);
+}
+
+.recipe-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
 .recipe-card-header {
   display: flex;
   justify-content: space-between;

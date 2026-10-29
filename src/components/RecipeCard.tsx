@@ -1,16 +1,23 @@
 import type { ReactElement } from 'react'
 import type { Recipe } from '../types/recipe'
 import { formatIngredient, getTotalTime } from '../utils/recipeUtils'
+import { Button } from './Button'
 import { Card } from './Card'
 
 export type RecipeCardProps = {
   recipe: Recipe
+  onToggleFavourite: (id: string) => void
+  onDelete: (id: string) => void
 }
 
 const PREVIEW_COUNT = 3
 
-export const RecipeCard = ({ recipe }: RecipeCardProps): ReactElement => {
-  const { title, category, servings, ingredients, isFavourite } = recipe
+export const RecipeCard = ({
+  recipe,
+  onToggleFavourite,
+  onDelete,
+}: RecipeCardProps): ReactElement => {
+  const { id, title, category, servings, ingredients, isFavourite } = recipe
   const previewIngredients = ingredients.slice(0, PREVIEW_COUNT)
   const hiddenCount = ingredients.length - previewIngredients.length
 
@@ -36,6 +43,18 @@ export const RecipeCard = ({ recipe }: RecipeCardProps): ReactElement => {
         ))}
       </ul>
       {hiddenCount > 0 && <p className="more">+{hiddenCount} more</p>}
+      <div className="recipe-card-actions">
+        <Button
+          variant="secondary"
+          pressed={isFavourite}
+          onClick={() => onToggleFavourite(id)}
+        >
+          {isFavourite ? '★ Favourite' : '☆ Favourite'}
+        </Button>
+        <Button variant="danger" onClick={() => onDelete(id)}>
+          Delete
+        </Button>
+      </div>
     </Card>
   )
 }
