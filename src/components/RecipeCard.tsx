@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { ReactElement } from 'react'
 import type { Recipe } from '../types/recipe'
 import { formatIngredient, getTotalTime } from '../utils/recipeUtils'
@@ -13,7 +14,7 @@ export type RecipeCardProps = {
 
 const PREVIEW_COUNT = 3
 
-export const RecipeCard = ({
+const RecipeCardView = ({
   recipe,
   onToggleFavourite,
   onEdit,
@@ -63,3 +64,6 @@ export const RecipeCard = ({
     </Card>
   )
 }
+
+// memo skips re-rendering when none of the props changed (same recipe, same handlers)
+export const RecipeCard = memo(RecipeCardView)

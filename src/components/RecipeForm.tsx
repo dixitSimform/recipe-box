@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ChangeEvent, FormEvent, ReactElement } from 'react'
 import { CATEGORIES } from '../constants/categories'
 import type { Category, Ingredient, NewRecipe, Recipe } from '../types/recipe'
@@ -75,6 +75,12 @@ export const RecipeForm = ({
   )
   const [rows, setRows] = useState<IngredientRow[]>(() => toRows(initialRecipe))
   const [error, setError] = useState('')
+  const titleInputRef = useRef<HTMLInputElement>(null)
+
+  // The form mounts when it opens, so this runs once and puts the cursor in the title
+  useEffect(() => {
+    titleInputRef.current?.focus()
+  }, [])
 
   // One handler for every field: the input's `name` matches a key of RecipeFormValues
   const handleChange = (
@@ -156,6 +162,7 @@ export const RecipeForm = ({
         <label htmlFor="recipe-title">Title</label>
         <input
           id="recipe-title"
+          ref={titleInputRef}
           name="title"
           type="text"
           value={values.title}
