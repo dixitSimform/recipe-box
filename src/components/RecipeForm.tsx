@@ -1,12 +1,17 @@
 import { useState } from 'react'
 import type { ChangeEvent, FormEvent, ReactElement } from 'react'
 import { CATEGORIES } from '../constants/categories'
-import type { Category, NewRecipe } from '../types/recipe'
+import type { Category, Ingredient, NewRecipe, Recipe } from '../types/recipe'
+import { createEmptyRow } from '../utils/recipeUtils'
 import { Button } from './Button'
+import { IngredientRows } from './IngredientRows'
+import type { IngredientRow } from './IngredientRows'
 
 export type RecipeFormProps = {
   onSubmit: (data: NewRecipe) => void
   onCancel: () => void
+  // When present the form edits this recipe instead of adding a new one
+  initialRecipe?: Recipe
 }
 
 // Number fields stay as strings while the user types; they are parsed on submit
@@ -20,7 +25,7 @@ export type RecipeFormValues = {
   notes: string
 }
 
-const initialValues: RecipeFormValues = {
+const emptyValues: RecipeFormValues = {
   title: '',
   category: 'dinner',
   prepMinutes: '0',
@@ -30,6 +35,31 @@ const initialValues: RecipeFormValues = {
   notes: '',
 }
 
+// Numbers become strings, steps are joined with new lines
+const toFormValues = (recipe?: Recipe): RecipeFormValues =>
+  recipe === undefined
+    ? emptyValues
+    : {
+        title: recipe.title,
+        category: recipe.category,
+        prepMinutes: String(recipe.prepMinutes),
+        cookMinutes: String(recipe.cookMinutes),
+        servings: String(recipe.servings),
+        steps: recipe.steps.join('\n'),
+        notes: recipe.notes ?? '',
+      }
+
+// A new recipe starts with one empty row; an existing one gets a row per ingredient
+const toRows = (recipe?: Recipe): IngredientRow[] =>
+  recipe === undefined
+    ? [createEmptyRow()]
+    : recipe.ingredients.map((ingredient) => ({
+        id: ingredient.id,
+        name: ingredient.name,
+        quantity: String(ingredient.quantity),
+        unit: ingredient.unit ?? '',
+      }))
+
 // Returns the number for "0", "15"... or null for "", "-1", "2.5", "abc"
 const parseWholeNumber = (value: string): number | null =>
   /^\d+$/.test(value.trim()) ? Number(value) : null
@@ -37,8 +67,13 @@ const parseWholeNumber = (value: string): number | null =>
 export const RecipeForm = ({
   onSubmit,
   onCancel,
+  initialRecipe,
 }: RecipeFormProps): ReactElement => {
-  const [values, setValues] = useState<RecipeFormValues>(initialValues)
+  // Lazy initialisers: the prefill runs once, when the form first appears
+  const [values, setValues] = useState<RecipeFormValues>(() =>
+    toFormValues(initialRecipe),
+  )
+  const [rows, setRows] = useState<IngredientRow[]>(() => toRows(initialRecipe))
   const [error, setError] = useState('')
 
   // One handler for every field: the input's `name` matches a key of RecipeFormValues
@@ -70,6 +105,28 @@ export const RecipeForm = ({
       return
     }
 
+    // Rows with an empty name are ignored; the others need a quantity above 0
+    const namedRows = rows.filter((row) => row.name.trim() !== '')
+    const hasBadQuantity = namedRows.some((row) => {
+      const quantity = Number(row.quantity)
+      return !(Number.isFinite(quantity) && quantity > 0)
+    })
+    if (hasBadQuantity) {
+      setError('Every ingredient needs a quantity greater than 0.')
+      return
+    }
+
+    const ingredients: Ingredient[] = namedRows.map((row) => {
+      const unit = row.unit.trim()
+      return {
+        id: row.id,
+        name: row.name.trim(),
+        quantity: Number(row.quantity),
+        // Leave `unit` out completely when it is empty
+        ...(unit !== '' ? { unit } : {}),
+      }
+    })
+
     const steps = values.steps
       .split('\n')
       .map((step) => step.trim())
@@ -83,7 +140,7 @@ export const RecipeForm = ({
       prepMinutes,
       cookMinutes,
       servings,
-      ingredients: [],
+      ingredients,
       steps,
       isFavourite: false,
       source: 'mine',
@@ -94,6 +151,7 @@ export const RecipeForm = ({
 
   return (
     <form className="recipe-form" onSubmit={handleSubmit} noValidate>
+      <h2>{initialRecipe ? 'Edit recipe' : 'Add recipe'}</h2>
       <div className="field">
         <label htmlFor="recipe-title">Title</label>
         <input
@@ -154,6 +212,10 @@ export const RecipeForm = ({
           />
         </div>
       </div>
+      <fieldset className="ingredients-fieldset">
+        <legend>Ingredients</legend>
+        <IngredientRows rows={rows} onChange={setRows} />
+      </fieldset>
       <div className="field">
         <label htmlFor="recipe-steps">Steps (one per line)</label>
         <textarea

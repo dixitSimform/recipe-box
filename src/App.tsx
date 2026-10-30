@@ -11,6 +11,7 @@ import {
   countFavourites,
   createRecipe,
   filterByCategory,
+  findById,
   toggleFavourite,
 } from './utils/recipeUtils'
 
@@ -20,10 +21,14 @@ function App() {
   const [category, setCategory] = useState<Category | 'all'>('all')
   const [favouritesOnly, setFavouritesOnly] = useState(false)
   const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
 
   // Derived values: recalculated on every render, so they never go out of sync
   const recipeCount = recipes.length
   const favouriteCount = countFavourites(recipes)
+  const editingRecipe =
+    editingId === null ? undefined : findById(recipes, editingId)
+  const isFormShown = isFormOpen || editingRecipe !== undefined
 
   // Derived, not state: only recomputed when recipes or a filter changes
   const visibleRecipes = useMemo(() => {
@@ -50,9 +55,45 @@ function App() {
     setRecipes((prev) => prev.filter((item) => item.id !== id))
   }
 
+  // Only one form at a time: opening one closes the other
+  const handleOpenAddForm = () => {
+    setEditingId(null)
+    setIsFormOpen(true)
+  }
+
+  const handleEdit = (id: string) => {
+    setIsFormOpen(false)
+    setEditingId(id)
+  }
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false)
+    setEditingId(null)
+  }
+
   const handleAddRecipe = (data: NewRecipe) => {
     setRecipes((prev) => [createRecipe(data), ...prev])
-    setIsFormOpen(false)
+    handleCloseForm()
+  }
+
+  const handleSaveEdit = (data: NewRecipe) => {
+    if (editingId === null) return
+
+    // Build from `data`, not `...recipe`, so a notes field the user cleared is really gone
+    setRecipes((prev) =>
+      prev.map((recipe) =>
+        recipe.id === editingId
+          ? {
+              ...data,
+              id: recipe.id,
+              createdAt: recipe.createdAt,
+              isFavourite: recipe.isFavourite,
+              source: recipe.source,
+            }
+          : recipe,
+      ),
+    )
+    handleCloseForm()
   }
 
   const handleClearFilters = () => {
@@ -70,13 +111,16 @@ function App() {
         {recipeCount} {recipeCount === 1 ? 'recipe' : 'recipes'} ·{' '}
         {favouriteCount} {favouriteCount === 1 ? 'favourite' : 'favourites'}
       </p>
-      {isFormOpen ? (
+      {isFormShown ? (
+        // The key makes React start a fresh form when you switch to another recipe
         <RecipeForm
-          onSubmit={handleAddRecipe}
-          onCancel={() => setIsFormOpen(false)}
+          key={editingRecipe?.id ?? 'new'}
+          initialRecipe={editingRecipe}
+          onSubmit={editingRecipe ? handleSaveEdit : handleAddRecipe}
+          onCancel={handleCloseForm}
         />
       ) : (
-        <Button onClick={() => setIsFormOpen(true)}>Add recipe</Button>
+        <Button onClick={handleOpenAddForm}>Add recipe</Button>
       )}
       <RecipeFilters
         search={search}
@@ -105,6 +149,7 @@ function App() {
             <RecipeCard
               recipe={recipe}
               onToggleFavourite={handleToggleFavourite}
+              onEdit={handleEdit}
               onDelete={handleDelete}
             />
           )}

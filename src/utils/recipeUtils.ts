@@ -1,3 +1,4 @@
+import type { IngredientRow } from '../components/IngredientRows'
 import type { Category, Ingredient, NewRecipe, Recipe } from '../types/recipe'
 
 // T can be any object type, as long as it has a string `id`
@@ -33,3 +34,10 @@ export const createRecipe = (data: NewRecipe): Recipe => ({
 
 export const formatIngredient = (ing: Ingredient): string =>
   [ing.quantity, ing.unit ?? '', ing.name].filter((part) => part !== '').join(' ')
+
+export const createEmptyRow = (): IngredientRow => ({
+  id: crypto.randomUUID(),
+  name: '',
+  quantity: '',
+  unit: '',
+})

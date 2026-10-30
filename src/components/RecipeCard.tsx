@@ -7,6 +7,7 @@ import { Card } from './Card'
 export type RecipeCardProps = {
   recipe: Recipe
   onToggleFavourite: (id: string) => void
+  onEdit: (id: string) => void
   onDelete: (id: string) => void
 }
 
@@ -15,6 +16,7 @@ const PREVIEW_COUNT = 3
 export const RecipeCard = ({
   recipe,
   onToggleFavourite,
+  onEdit,
   onDelete,
 }: RecipeCardProps): ReactElement => {
   const { id, title, category, servings, ingredients, isFavourite } = recipe
@@ -50,6 +52,9 @@ export const RecipeCard = ({
           onClick={() => onToggleFavourite(id)}
         >
           {isFavourite ? '★ Favourite' : '☆ Favourite'}
+        </Button>
+        <Button variant="secondary" onClick={() => onEdit(id)}>
+          Edit
         </Button>
         <Button variant="danger" onClick={() => onDelete(id)}>
           Delete
