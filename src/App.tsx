@@ -4,10 +4,12 @@ import { Layout } from './components/Layout'
 import { List } from './components/List'
 import { RecipeCard } from './components/RecipeCard'
 import { RecipeFilters } from './components/RecipeFilters'
+import { RecipeForm } from './components/RecipeForm'
 import { sampleRecipes } from './data/sampleRecipes'
-import type { Category, Recipe } from './types/recipe'
+import type { Category, NewRecipe, Recipe } from './types/recipe'
 import {
   countFavourites,
+  createRecipe,
   filterByCategory,
   toggleFavourite,
 } from './utils/recipeUtils'
@@ -17,6 +19,7 @@ function App() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState<Category | 'all'>('all')
   const [favouritesOnly, setFavouritesOnly] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(false)
 
   // Derived values: recalculated on every render, so they never go out of sync
   const recipeCount = recipes.length
@@ -47,6 +50,11 @@ function App() {
     setRecipes((prev) => prev.filter((item) => item.id !== id))
   }
 
+  const handleAddRecipe = (data: NewRecipe) => {
+    setRecipes((prev) => [createRecipe(data), ...prev])
+    setIsFormOpen(false)
+  }
+
   const handleClearFilters = () => {
     setSearch('')
     setCategory('all')
@@ -62,6 +70,14 @@ function App() {
         {recipeCount} {recipeCount === 1 ? 'recipe' : 'recipes'} ·{' '}
         {favouriteCount} {favouriteCount === 1 ? 'favourite' : 'favourites'}
       </p>
+      {isFormOpen ? (
+        <RecipeForm
+          onSubmit={handleAddRecipe}
+          onCancel={() => setIsFormOpen(false)}
+        />
+      ) : (
+        <Button onClick={() => setIsFormOpen(true)}>Add recipe</Button>
+      )}
       <RecipeFilters
         search={search}
         category={category}
