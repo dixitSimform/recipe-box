@@ -12,7 +12,7 @@ Recipe Box lets you keep your own recipes and discover new ones from [TheMealDB]
 | 2 | Types, sample data and utilities | 1 Foundation | 1, 2, 4, 5, 6, 7 | Done (2026-10-28) |
 | 3 | Static UI components | 1 Foundation | 7, 8, 9, 10 | Done (2026-10-29) |
 | 4 | Recipes in state: favourite and delete | 2 Interactivity | 8, 11, 12 | Done (2026-10-29) |
-| 5 | Search and filters | 2 Interactivity | 12, 13, 15 | Not started |
+| 5 | Search and filters | 2 Interactivity | 12, 13, 15 | Done (2026-10-30) |
 | 6 | Add-recipe form | 2 Interactivity | 13, 14 | Not started |
 | 7 | Ingredient rows and editing | 2 Interactivity | 1, 13, 14 | Not started |
 | 8 | Custom hooks, refs and callbacks | 2 Interactivity | 7, 15, 16, 17 | Not started |

@@ -135,6 +135,49 @@ body {
   color: var(--muted-foreground);
 }
 
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.field label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.field input[type='search'],
+.field select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
+  font: inherit;
+}
+
+.field select {
+  text-transform: capitalize;
+}
+
+.field-checkbox {
+  flex-direction: row;
+  align-items: center;
+  padding-bottom: 0.5rem;
+}
+
+.empty .btn {
+  margin-top: 0.5rem;
+}
+
 .recipe-card-actions {
   display: flex;
   gap: 0.5rem;
