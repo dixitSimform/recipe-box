@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Button } from './components/Button'
+import { DiscoverView } from './components/DiscoverView'
 import { Layout } from './components/Layout'
 import { List } from './components/List'
 import { RecipeCard } from './components/RecipeCard'
@@ -26,6 +27,7 @@ function App() {
   const [favouritesOnly, setFavouritesOnly] = useState(false)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [view, setView] = useState<'mine' | 'discover'>('mine')
 
   // Derived values: recalculated on every render, so they never go out of sync
   const recipeCount = recipes.length
@@ -134,59 +136,83 @@ function App() {
 
   return (
     <Layout>
-      <p className="summary">
-        {recipeCount} {recipeCount === 1 ? 'recipe' : 'recipes'} ·{' '}
-        {favouriteCount} {favouriteCount === 1 ? 'favourite' : 'favourites'}
-      </p>
-      <div className="toolbar">
-        {!isFormShown && <Button onClick={handleOpenAddForm}>Add recipe</Button>}
-        <Button variant="secondary" onClick={handleReset}>
-          Reset sample data
+      <div className="tabs">
+        <Button
+          variant={view === 'mine' ? 'primary' : 'secondary'}
+          pressed={view === 'mine'}
+          onClick={() => setView('mine')}
+        >
+          My recipes
+        </Button>
+        <Button
+          variant={view === 'discover' ? 'primary' : 'secondary'}
+          pressed={view === 'discover'}
+          onClick={() => setView('discover')}
+        >
+          Discover
         </Button>
       </div>
-      {isFormShown && (
-        // The key makes React start a fresh form when you switch to another recipe
-        <RecipeForm
-          key={editingRecipe?.id ?? 'new'}
-          initialRecipe={editingRecipe}
-          onSubmit={editingRecipe ? handleSaveEdit : handleAddRecipe}
-          onCancel={handleCloseForm}
-        />
-      )}
-      <RecipeFilters
-        search={search}
-        category={category}
-        favouritesOnly={favouritesOnly}
-        onSearchChange={setSearch}
-        onCategoryChange={setCategory}
-        onFavouritesOnlyChange={setFavouritesOnly}
-        onClear={handleClearFilters}
-      />
-      <p className="summary">
-        Showing {visibleRecipes.length} of {recipeCount}{' '}
-        {recipeCount === 1 ? 'recipe' : 'recipes'}
-      </p>
-      {hasNoMatches ? (
-        <div className="empty">
-          <p>No recipes match your filters.</p>
-          <Button variant="secondary" onClick={handleClearFilters}>
-            Clear filters
-          </Button>
-        </div>
+      {view === 'discover' ? (
+        <DiscoverView />
       ) : (
-        <List
-          items={visibleRecipes}
-          renderItem={(recipe) => (
-            <RecipeCard
-              recipe={recipe}
-              onToggleFavourite={handleToggleFavourite}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+        <>
+          <p className="summary">
+            {recipeCount} {recipeCount === 1 ? 'recipe' : 'recipes'} ·{' '}
+            {favouriteCount} {favouriteCount === 1 ? 'favourite' : 'favourites'}
+          </p>
+          <div className="toolbar">
+            {!isFormShown && (
+              <Button onClick={handleOpenAddForm}>Add recipe</Button>
+            )}
+            <Button variant="secondary" onClick={handleReset}>
+              Reset sample data
+            </Button>
+          </div>
+          {isFormShown && (
+            // The key makes React start a fresh form when you switch to another recipe
+            <RecipeForm
+              key={editingRecipe?.id ?? 'new'}
+              initialRecipe={editingRecipe}
+              onSubmit={editingRecipe ? handleSaveEdit : handleAddRecipe}
+              onCancel={handleCloseForm}
             />
           )}
-          getKey={(recipe) => recipe.id}
-          emptyMessage="No recipes yet."
-        />
+          <RecipeFilters
+            search={search}
+            category={category}
+            favouritesOnly={favouritesOnly}
+            onSearchChange={setSearch}
+            onCategoryChange={setCategory}
+            onFavouritesOnlyChange={setFavouritesOnly}
+            onClear={handleClearFilters}
+          />
+          <p className="summary">
+            Showing {visibleRecipes.length} of {recipeCount}{' '}
+            {recipeCount === 1 ? 'recipe' : 'recipes'}
+          </p>
+          {hasNoMatches ? (
+            <div className="empty">
+              <p>No recipes match your filters.</p>
+              <Button variant="secondary" onClick={handleClearFilters}>
+                Clear filters
+              </Button>
+            </div>
+          ) : (
+            <List
+              items={visibleRecipes}
+              renderItem={(recipe) => (
+                <RecipeCard
+                  recipe={recipe}
+                  onToggleFavourite={handleToggleFavourite}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              )}
+              getKey={(recipe) => recipe.id}
+              emptyMessage="No recipes yet."
+            />
+          )}
+        </>
       )}
     </Layout>
   )
