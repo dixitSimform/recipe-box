@@ -2,14 +2,24 @@ import { useState } from 'react'
 import type { ReactElement } from 'react'
 import { searchMealsUrl } from '../api/mealdb'
 import type { MealDbSearchResponse } from '../api/mealdb'
+import { useDebounce } from '../hooks/useDebounce'
 import { useFetch } from '../hooks/useFetch'
+import { Button } from './Button'
+import { List } from './List'
+import { MealCard } from './MealCard'
+
+const DEBOUNCE_MS = 400
+const MIN_QUERY_LENGTH = 2
 
 export const DiscoverView = (): ReactElement => {
   const [query, setQuery] = useState('')
 
-  const trimmedQuery = query.trim()
-  const state = useFetch<MealDbSearchResponse>(
-    trimmedQuery === '' ? null : searchMealsUrl(trimmedQuery),
+  // The input updates on every keystroke; the request only follows the debounced value
+  const debouncedQuery = useDebounce(query, DEBOUNCE_MS).trim()
+  const { state, refetch } = useFetch<MealDbSearchResponse>(
+    debouncedQuery.length >= MIN_QUERY_LENGTH
+      ? searchMealsUrl(debouncedQuery)
+      : null,
   )
 
   return (
@@ -27,18 +37,28 @@ export const DiscoverView = (): ReactElement => {
       </div>
       {/* Checking `status` narrows the type, so `data` and `error` only exist in their own branch */}
       {state.status === 'idle' && (
-        <p className="empty">Type a meal name to search.</p>
+        <p className="empty">Type at least 2 letters to search.</p>
       )}
-      {state.status === 'loading' && <p className="empty">Loading…</p>}
+      {state.status === 'loading' && (
+        <p className="empty" aria-live="polite">
+          Searching…
+        </p>
+      )}
       {state.status === 'error' && (
-        <p className="form-error">{state.error}</p>
+        <div className="empty">
+          <p className="form-error">{state.error}</p>
+          <Button variant="secondary" onClick={refetch}>
+            Try again
+          </Button>
+        </div>
       )}
       {state.status === 'success' && (
-        <ul className="meal-list">
-          {(state.data.meals ?? []).map((meal) => (
-            <li key={meal.idMeal}>{meal.strMeal}</li>
-          ))}
-        </ul>
+        <List
+          items={state.data.meals ?? []}
+          renderItem={(meal) => <MealCard meal={meal} />}
+          getKey={(meal) => meal.idMeal}
+          emptyMessage={`No meals found for "${debouncedQuery}".`}
+        />
       )}
     </section>
   )

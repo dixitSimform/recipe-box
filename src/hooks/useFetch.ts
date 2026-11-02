@@ -1,12 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { FetchState } from '../types/fetchState'
 
-// Only the finished outcomes are stored, together with the url they belong to
-type SettledState<T> = Extract<FetchState<T>, { status: 'success' | 'error' }>
-type Result<T> = { url: string; state: SettledState<T> }
+export type UseFetchResult<T> = {
+  state: FetchState<T>
+  refetch: () => void
+}
 
-export const useFetch = <T>(url: string | null): FetchState<T> => {
+// Only the finished outcomes are stored, together with the request they belong to
+type SettledState<T> = Extract<FetchState<T>, { status: 'success' | 'error' }>
+type Result<T> = { url: string; reloadCount: number; state: SettledState<T> }
+
+export const useFetch = <T>(url: string | null): UseFetchResult<T> => {
   const [result, setResult] = useState<Result<T> | null>(null)
+  // Changing this number is what makes the effect run again for the same url
+  const [reloadCount, setReloadCount] = useState(0)
+
+  const refetch = useCallback(() => setReloadCount((count) => count + 1), [])
 
   useEffect(() => {
     if (url === null) return
@@ -25,13 +34,18 @@ export const useFetch = <T>(url: string | null): FetchState<T> => {
 
         const json: unknown = await response.json()
         // The one cast: JSON from the network can't be checked against T at runtime
-        setResult({ url, state: { status: 'success', data: json as T } })
+        setResult({
+          url,
+          reloadCount,
+          state: { status: 'success', data: json as T },
+        })
       } catch (error) {
         // Aborting is expected (the url changed or the component unmounted), not a failure
         if (error instanceof DOMException && error.name === 'AbortError') return
 
         setResult({
           url,
+          reloadCount,
           state: {
             status: 'error',
             error:
@@ -44,10 +58,16 @@ export const useFetch = <T>(url: string | null): FetchState<T> => {
 
     // Runs before the next effect and on unmount: cancels the request that is still in flight
     return () => controller.abort()
-  }, [url])
+  }, [url, reloadCount])
 
   // idle and loading are derived during render, so the effect never calls setState synchronously
-  if (url === null) return { status: 'idle' }
-  if (result === null || result.url !== url) return { status: 'loading' }
-  return result.state
+  if (url === null) return { state: { status: 'idle' }, refetch }
+  if (
+    result === null ||
+    result.url !== url ||
+    result.reloadCount !== reloadCount
+  ) {
+    return { state: { status: 'loading' }, refetch }
+  }
+  return { state: result.state, refetch }
 }

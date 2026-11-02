@@ -17,7 +17,7 @@ Recipe Box lets you keep your own recipes and discover new ones from [TheMealDB]
 | 7 | Ingredient rows and editing | 2 Interactivity | 1, 13, 14 | Done (2026-10-30) |
 | 8 | Custom hooks, refs and callbacks | 2 Interactivity | 7, 15, 16, 17 | Done (2026-10-30) |
 | 9 | Fetching with `useFetch` | 3 Discover | 3, 6, 7, 15, 17 | Done (2026-11-02) |
-| 10 | Debounced search and async UI states | 3 Discover | 16, 17, 18 | Not started |
+| 10 | Debounced search and async UI states | 3 Discover | 16, 17, 18 | Done (2026-11-02) |
 | 11 | Import meals into your recipes | 3 Discover | 1, 2, 5, 12 | Not started |
 | 12 | Router setup, layout route, 404 | 4 Routing | 19, 20 | Not started |
 | 13 | Recipe detail page and nested routes | 4 Routing | 19 | Not started |
