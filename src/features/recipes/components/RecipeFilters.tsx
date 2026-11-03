@@ -1,7 +1,7 @@
 import type { ChangeEvent, ReactElement } from 'react'
-import { CATEGORIES } from '../constants/categories'
-import type { Category } from '../types/recipe'
-import { Button } from './Button'
+import { CATEGORIES } from '../../../constants/categories'
+import type { Category } from '../types'
+import { Button } from '../../../shared/components/Button'
 
 export type RecipeFiltersProps = {
   search: string

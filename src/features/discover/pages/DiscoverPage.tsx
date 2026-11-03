@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
-import type { MealDbMeal } from '../api/mealdb'
+import type { MealDbMeal } from '../api'
 import { DiscoverView } from '../components/DiscoverView'
-import type { Recipe } from '../types/recipe'
+import type { Recipe } from '../../recipes/types'
 
 export type DiscoverPageProps = {
   recipes: Recipe[]

@@ -1,8 +1,8 @@
 import type { ReactElement } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { RecipeForm } from '../components/RecipeForm'
-import type { NewRecipe, Recipe } from '../types/recipe'
-import { findById } from '../utils/recipeUtils'
+import type { NewRecipe, Recipe } from '../types'
+import { findById } from '../recipeUtils'
 
 export type EditRecipePageProps = {
   recipes: Recipe[]

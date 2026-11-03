@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
 import { useNavigate } from 'react-router'
 import { RecipeForm } from '../components/RecipeForm'
-import type { NewRecipe, Recipe } from '../types/recipe'
+import type { NewRecipe, Recipe } from '../types'
 
 export type NewRecipePageProps = {
   onAdd: (data: NewRecipe) => Recipe

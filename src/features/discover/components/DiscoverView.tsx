@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import type { ReactElement } from 'react'
-import { searchMealsUrl } from '../api/mealdb'
-import type { MealDbMeal, MealDbSearchResponse } from '../api/mealdb'
-import { useDebounce } from '../hooks/useDebounce'
-import { useFetch } from '../hooks/useFetch'
-import { Button } from './Button'
-import { List } from './List'
+import { searchMealsUrl } from '../api'
+import type { MealDbMeal, MealDbSearchResponse } from '../api'
+import { useDebounce } from '../../../shared/hooks/useDebounce'
+import { useFetch } from '../../../shared/hooks/useFetch'
+import { Button } from '../../../shared/components/Button'
+import { List } from '../../../shared/components/List'
 import { MealCard } from './MealCard'
 
 const DEBOUNCE_MS = 400

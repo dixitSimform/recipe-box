@@ -1,16 +1,16 @@
 import { useCallback, useMemo } from 'react'
 import type { ReactElement } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
-import { Button } from '../components/Button'
-import { List } from '../components/List'
+import { Button } from '../../../shared/components/Button'
+import { List } from '../../../shared/components/List'
 import { RecipeCard } from '../components/RecipeCard'
 import { RecipeFilters } from '../components/RecipeFilters'
-import type { Category, Recipe } from '../types/recipe'
+import type { Category, Recipe } from '../types'
 import {
   countFavourites,
   filterByCategory,
   isCategory,
-} from '../utils/recipeUtils'
+} from '../recipeUtils'
 
 export type RecipesPageProps = {
   recipes: Recipe[]

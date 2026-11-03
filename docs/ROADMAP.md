@@ -22,7 +22,7 @@ Recipe Box lets you keep your own recipes and discover new ones from [TheMealDB]
 | 12 | Router setup, layout route, 404 | 4 Routing | 19, 20 | Done (2026-11-03) |
 | 13 | Recipe detail page and nested routes | 4 Routing | 19 | Done (2026-11-03) |
 | 14 | Add/edit pages, navigation and URL filters | 4 Routing | 6, 20 | Done (2026-11-03) |
-| 15 | Feature-folder refactor | 5 Organise | 4, 21 | Not started |
+| 15 | Feature-folder refactor | 5 Organise | 4, 21 | Done (2026-11-03) |
 | 16 | README and code walkthrough | 5 Organise | All | Not started |
 
 Steps 17+ (JSON Server CRUD, validation, Context, TanStack Query, tests, deployment) will be added here when Days 22–36 are reached.

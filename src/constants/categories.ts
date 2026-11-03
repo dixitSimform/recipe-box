@@ -1,4 +1,4 @@
-import type { Category } from '../types/recipe'
+import type { Category } from '../features/recipes/types'
 
 export const CATEGORIES: Category[] = [
   'breakfast',

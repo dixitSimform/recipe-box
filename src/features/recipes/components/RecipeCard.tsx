@@ -1,10 +1,10 @@
 import { memo } from 'react'
 import type { ReactElement } from 'react'
 import { Link } from 'react-router'
-import type { Recipe } from '../types/recipe'
-import { formatIngredient, getTotalTime } from '../utils/recipeUtils'
-import { Button } from './Button'
-import { Card } from './Card'
+import type { Recipe } from '../types'
+import { formatIngredient, getTotalTime } from '../recipeUtils'
+import { Button } from '../../../shared/components/Button'
+import { Card } from '../../../shared/components/Card'
 
 export type RecipeCardProps = {
   recipe: Recipe

@@ -1,6 +1,6 @@
-import type { IngredientRow } from '../components/IngredientRows'
-import { CATEGORIES } from '../constants/categories'
-import type { Category, Ingredient, NewRecipe, Recipe } from '../types/recipe'
+import type { IngredientRow } from './components/IngredientRows'
+import { CATEGORIES } from '../../constants/categories'
+import type { Category, Ingredient, NewRecipe, Recipe } from './types'
 
 // T can be any object type, as long as it has a string `id`
 export const findById = <T extends { id: string }>(

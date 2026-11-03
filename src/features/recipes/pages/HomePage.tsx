@@ -1,9 +1,9 @@
 import type { ReactElement } from 'react'
 import { Link } from 'react-router'
-import { Card } from '../components/Card'
-import { List } from '../components/List'
-import type { Recipe } from '../types/recipe'
-import { countFavourites } from '../utils/recipeUtils'
+import { Card } from '../../../shared/components/Card'
+import { List } from '../../../shared/components/List'
+import type { Recipe } from '../types'
+import { countFavourites } from '../recipeUtils'
 
 export type HomePageProps = {
   recipes: Recipe[]

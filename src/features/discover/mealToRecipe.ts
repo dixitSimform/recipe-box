@@ -1,5 +1,5 @@
-import type { Category, Ingredient, NewRecipe } from '../types/recipe'
-import type { MealDbMeal } from './mealdb'
+import type { Category, Ingredient, NewRecipe } from '../recipes/types'
+import type { MealDbMeal } from './api'
 
 const MAX_INGREDIENTS = 20
 

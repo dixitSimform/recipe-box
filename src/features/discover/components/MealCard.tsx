@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
-import type { MealDbMeal } from '../api/mealdb'
-import { Button } from './Button'
-import { Card } from './Card'
+import type { MealDbMeal } from '../api'
+import { Button } from '../../../shared/components/Button'
+import { Card } from '../../../shared/components/Card'
 
 export type MealCardProps = {
   meal: MealDbMeal

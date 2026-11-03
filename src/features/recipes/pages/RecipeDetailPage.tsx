@@ -1,8 +1,8 @@
 import type { ReactElement } from 'react'
 import { Link, NavLink, Outlet, useNavigate, useParams } from 'react-router'
-import { Button } from '../components/Button'
-import type { Recipe } from '../types/recipe'
-import { findById, getTotalTime } from '../utils/recipeUtils'
+import { Button } from '../../../shared/components/Button'
+import type { Recipe } from '../types'
+import { findById, getTotalTime } from '../recipeUtils'
 
 export type RecipeDetailPageProps = {
   recipes: Recipe[]

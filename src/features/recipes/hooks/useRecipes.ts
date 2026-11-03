@@ -1,10 +1,10 @@
 import { useCallback } from 'react'
-import { mealToRecipe } from '../api/mealToRecipe'
-import type { MealDbMeal } from '../api/mealdb'
-import { sampleRecipes } from '../data/sampleRecipes'
-import type { NewRecipe, Recipe } from '../types/recipe'
-import { createRecipe, toggleFavourite } from '../utils/recipeUtils'
-import { useLocalStorage } from './useLocalStorage'
+import { mealToRecipe } from '../../discover/mealToRecipe'
+import type { MealDbMeal } from '../../discover/api'
+import { sampleRecipes } from '../../../data/sampleRecipes'
+import type { NewRecipe, Recipe } from '../types'
+import { createRecipe, toggleFavourite } from '../recipeUtils'
+import { useLocalStorage } from '../../../shared/hooks/useLocalStorage'
 
 export type UseRecipesResult = {
   recipes: Recipe[]

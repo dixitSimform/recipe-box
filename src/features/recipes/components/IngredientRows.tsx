@@ -1,6 +1,6 @@
 import type { ChangeEvent, ReactElement } from 'react'
-import { createEmptyRow } from '../utils/recipeUtils'
-import { Button } from './Button'
+import { createEmptyRow } from '../recipeUtils'
+import { Button } from '../../../shared/components/Button'
 
 // Quantity stays a string while editing, like the number fields in RecipeForm
 export type IngredientRow = {

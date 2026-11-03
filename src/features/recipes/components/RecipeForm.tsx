@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ChangeEvent, FormEvent, ReactElement } from 'react'
-import { CATEGORIES } from '../constants/categories'
-import type { Category, Ingredient, NewRecipe, Recipe } from '../types/recipe'
-import { createEmptyRow } from '../utils/recipeUtils'
-import { Button } from './Button'
+import { CATEGORIES } from '../../../constants/categories'
+import type { Category, Ingredient, NewRecipe, Recipe } from '../types'
+import { createEmptyRow } from '../recipeUtils'
+import { Button } from '../../../shared/components/Button'
 import { IngredientRows } from './IngredientRows'
 import type { IngredientRow } from './IngredientRows'
 

@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react'
 import { useOutletContext } from 'react-router'
-import { formatIngredient } from '../utils/recipeUtils'
+import { formatIngredient } from '../recipeUtils'
 import type { RecipeOutletContext } from './RecipeDetailPage'
 
 export const RecipeIngredients = (): ReactElement => {
