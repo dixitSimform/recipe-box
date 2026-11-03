@@ -20,7 +20,9 @@ const RecipeCardView = ({
   onEdit,
   onDelete,
 }: RecipeCardProps): ReactElement => {
-  const { id, title, category, servings, ingredients, isFavourite } = recipe
+  const { id, title, category, servings, ingredients, isFavourite, source } =
+    recipe
+  const totalTime = getTotalTime(recipe)
   const previewIngredients = ingredients.slice(0, PREVIEW_COUNT)
   const hiddenCount = ingredients.length - previewIngredients.length
 
@@ -34,10 +36,14 @@ const RecipeCardView = ({
           </span>
         )}
       </div>
-      <span className="badge">{category}</span>
+      <div className="meal-badges">
+        <span className="badge">{category}</span>
+        {source === 'mealdb' && <span className="badge">TheMealDB</span>}
+      </div>
       <p className="recipe-meta">
-        {getTotalTime(recipe)} min · {servings}{' '}
-        {servings === 1 ? 'serving' : 'servings'} · {ingredients.length}{' '}
+        {totalTime > 0 && `${totalTime} min · `}
+        {servings} {servings === 1 ? 'serving' : 'servings'} ·{' '}
+        {ingredients.length}{' '}
         {ingredients.length === 1 ? 'ingredient' : 'ingredients'}
       </p>
       <ul className="ingredient-preview">

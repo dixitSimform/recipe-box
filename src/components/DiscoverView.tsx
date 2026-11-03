@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { ReactElement } from 'react'
 import { searchMealsUrl } from '../api/mealdb'
-import type { MealDbSearchResponse } from '../api/mealdb'
+import type { MealDbMeal, MealDbSearchResponse } from '../api/mealdb'
 import { useDebounce } from '../hooks/useDebounce'
 import { useFetch } from '../hooks/useFetch'
 import { Button } from './Button'
@@ -11,7 +11,15 @@ import { MealCard } from './MealCard'
 const DEBOUNCE_MS = 400
 const MIN_QUERY_LENGTH = 2
 
-export const DiscoverView = (): ReactElement => {
+export type DiscoverViewProps = {
+  savedExternalIds: Set<string>
+  onImport: (meal: MealDbMeal) => void
+}
+
+export const DiscoverView = ({
+  savedExternalIds,
+  onImport,
+}: DiscoverViewProps): ReactElement => {
   const [query, setQuery] = useState('')
 
   // The input updates on every keystroke; the request only follows the debounced value
@@ -55,7 +63,13 @@ export const DiscoverView = (): ReactElement => {
       {state.status === 'success' && (
         <List
           items={state.data.meals ?? []}
-          renderItem={(meal) => <MealCard meal={meal} />}
+          renderItem={(meal) => (
+            <MealCard
+              meal={meal}
+              isSaved={savedExternalIds.has(meal.idMeal)}
+              onImport={onImport}
+            />
+          )}
           getKey={(meal) => meal.idMeal}
           emptyMessage={`No meals found for "${debouncedQuery}".`}
         />

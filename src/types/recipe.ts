@@ -19,6 +19,7 @@ export interface Recipe {
   isFavourite: boolean
   notes?: string
   source: 'mine' | 'mealdb'
+  externalId?: string // the TheMealDB id, for imported recipes
   createdAt: string // ISO date
 }
 

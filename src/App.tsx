@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { mealToRecipe } from './api/mealToRecipe'
+import type { MealDbMeal } from './api/mealdb'
 import { Button } from './components/Button'
 import { DiscoverView } from './components/DiscoverView'
 import { Layout } from './components/Layout'
@@ -35,6 +37,12 @@ function App() {
   const editingRecipe =
     editingId === null ? undefined : findById(recipes, editingId)
   const isFormShown = isFormOpen || editingRecipe !== undefined
+  // Derived: which TheMealDB meals are already in my recipes (flatMap skips recipes without an externalId)
+  const savedExternalIds = new Set(
+    recipes.flatMap((recipe) =>
+      recipe.externalId === undefined ? [] : [recipe.externalId],
+    ),
+  )
 
   // Derived, not state: only recomputed when recipes or a filter changes
   const visibleRecipes = useMemo(() => {
@@ -118,6 +126,15 @@ function App() {
     handleCloseForm()
   }
 
+  const handleImportMeal = (meal: MealDbMeal) => {
+    // The check inside the updater also stops a double click from importing the same meal twice
+    setRecipes((prev) =>
+      prev.some((recipe) => recipe.externalId === meal.idMeal)
+        ? prev
+        : [createRecipe(mealToRecipe(meal)), ...prev],
+    )
+  }
+
   const handleReset = () => {
     if (!window.confirm('Replace all recipes with the sample data?')) return
 
@@ -153,7 +170,10 @@ function App() {
         </Button>
       </div>
       {view === 'discover' ? (
-        <DiscoverView />
+        <DiscoverView
+          savedExternalIds={savedExternalIds}
+          onImport={handleImportMeal}
+        />
       ) : (
         <>
           <p className="summary">
