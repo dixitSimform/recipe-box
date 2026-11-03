@@ -349,6 +349,12 @@ a.btn {
   margin: 0;
 }
 
+.recipe-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .recipe-notes {
   margin: 0 0 1rem;
   font-style: italic;

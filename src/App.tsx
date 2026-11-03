@@ -3,7 +3,9 @@ import { Route, Routes } from 'react-router'
 import { AppLayout } from './components/AppLayout'
 import { useRecipes } from './hooks/useRecipes'
 import { DiscoverPage } from './pages/DiscoverPage'
+import { EditRecipePage } from './pages/EditRecipePage'
 import { HomePage } from './pages/HomePage'
+import { NewRecipePage } from './pages/NewRecipePage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { RecipeDetailPage } from './pages/RecipeDetailPage'
 import { RecipeIngredients } from './pages/RecipeIngredients'
@@ -30,13 +32,17 @@ function App() {
           element={
             <RecipesPage
               recipes={recipes}
-              onAdd={add}
-              onUpdate={update}
               onRemove={remove}
               onToggleFavourite={toggleFavourite}
               onReset={reset}
             />
           }
+        />
+        {/* React Router ranks static segments above ":id", so "new" is never read as an id */}
+        <Route path="recipes/new" element={<NewRecipePage onAdd={add} />} />
+        <Route
+          path="recipes/:id/edit"
+          element={<EditRecipePage recipes={recipes} onUpdate={update} />}
         />
         <Route
           path="recipes/:id"
@@ -44,6 +50,7 @@ function App() {
             <RecipeDetailPage
               recipes={recipes}
               onToggleFavourite={toggleFavourite}
+              onRemove={remove}
             />
           }
         >

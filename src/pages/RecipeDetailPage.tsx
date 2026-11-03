@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react'
-import { Link, NavLink, Outlet, useParams } from 'react-router'
+import { Link, NavLink, Outlet, useNavigate, useParams } from 'react-router'
 import { Button } from '../components/Button'
 import type { Recipe } from '../types/recipe'
 import { findById, getTotalTime } from '../utils/recipeUtils'
@@ -7,6 +7,7 @@ import { findById, getTotalTime } from '../utils/recipeUtils'
 export type RecipeDetailPageProps = {
   recipes: Recipe[]
   onToggleFavourite: (id: string) => void
+  onRemove: (id: string) => boolean
 }
 
 // The shape of the value passed to the nested routes with <Outlet context={...} />
@@ -20,9 +21,11 @@ const getTabClass = ({ isActive }: { isActive: boolean }): string =>
 export const RecipeDetailPage = ({
   recipes,
   onToggleFavourite,
+  onRemove,
 }: RecipeDetailPageProps): ReactElement => {
   // useParams reads the ":id" part of the URL; URL parts are always strings (or undefined)
   const { id } = useParams()
+  const navigate = useNavigate()
   const recipe = id === undefined ? undefined : findById(recipes, id)
 
   // A missing recipe is a problem with this page only, so it is not the 404 page
@@ -36,6 +39,12 @@ export const RecipeDetailPage = ({
     )
   }
 
+  const handleDelete = () => {
+    // onRemove asks for confirmation; only leave the page if the recipe was really deleted.
+    // replace: true swaps this page in the history, so Back cannot return to a deleted recipe.
+    if (onRemove(recipe.id)) navigate('/recipes', { replace: true })
+  }
+
   const { title, category, servings, prepMinutes, cookMinutes, notes } = recipe
   const outletContext: RecipeOutletContext = { recipe }
 
@@ -43,13 +52,21 @@ export const RecipeDetailPage = ({
     <section className="recipe-detail">
       <div className="recipe-detail-header">
         <h2>{title}</h2>
-        <Button
-          variant="secondary"
-          pressed={recipe.isFavourite}
-          onClick={() => onToggleFavourite(recipe.id)}
-        >
-          {recipe.isFavourite ? '★ Favourite' : '☆ Favourite'}
-        </Button>
+        <div className="recipe-detail-actions">
+          <Button
+            variant="secondary"
+            pressed={recipe.isFavourite}
+            onClick={() => onToggleFavourite(recipe.id)}
+          >
+            {recipe.isFavourite ? '★ Favourite' : '☆ Favourite'}
+          </Button>
+          <Link className="btn btn-secondary" to={`/recipes/${recipe.id}/edit`}>
+            Edit
+          </Link>
+          <Button variant="danger" onClick={handleDelete}>
+            Delete
+          </Button>
+        </div>
       </div>
       <div className="meal-badges">
         <span className="badge">{category}</span>

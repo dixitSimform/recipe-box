@@ -8,9 +8,11 @@ import { useLocalStorage } from './useLocalStorage'
 
 export type UseRecipesResult = {
   recipes: Recipe[]
-  add: (data: NewRecipe) => void
+  // Returns the new recipe so the caller can navigate to it
+  add: (data: NewRecipe) => Recipe
   update: (id: string, data: NewRecipe) => void
-  remove: (id: string) => void
+  // Returns true when the user confirmed and the recipe was deleted
+  remove: (id: string) => boolean
   toggleFavourite: (id: string) => void
   importMeal: (meal: MealDbMeal) => void
   // Returns true when the user confirmed and the sample data was restored
@@ -26,8 +28,11 @@ export const useRecipes = (): UseRecipesResult => {
   // useCallback keeps the same function between renders, so memo(RecipeCard) can skip re-rendering.
   // setRecipes never changes, and functional updates avoid reading `recipes`.
   const add = useCallback(
-    (data: NewRecipe) => {
-      setRecipes((prev) => [createRecipe(data), ...prev])
+    (data: NewRecipe): Recipe => {
+      // Created outside the updater so the caller gets the same recipe (and id) that is stored
+      const recipe = createRecipe(data)
+      setRecipes((prev) => [recipe, ...prev])
+      return recipe
     },
     [setRecipes],
   )
@@ -54,11 +59,12 @@ export const useRecipes = (): UseRecipesResult => {
 
   // Needs `recipes` for the title in the confirm message, so it changes when recipes change
   const remove = useCallback(
-    (id: string) => {
+    (id: string): boolean => {
       const recipe = recipes.find((item) => item.id === id)
-      if (!recipe || !window.confirm(`Delete "${recipe.title}"?`)) return
+      if (!recipe || !window.confirm(`Delete "${recipe.title}"?`)) return false
 
       setRecipes((prev) => prev.filter((item) => item.id !== id))
+      return true
     },
     [recipes, setRecipes],
   )

@@ -1,4 +1,5 @@
 import type { IngredientRow } from '../components/IngredientRows'
+import { CATEGORIES } from '../constants/categories'
 import type { Category, Ingredient, NewRecipe, Recipe } from '../types/recipe'
 
 // T can be any object type, as long as it has a string `id`
@@ -9,6 +10,11 @@ export const findById = <T extends { id: string }>(
 
 export const getTotalTime = ({ prepMinutes, cookMinutes }: Recipe): number =>
   prepMinutes + cookMinutes
+
+// Type guard: when this returns true, TypeScript treats `value` as a Category.
+// Useful for values that arrive as plain strings, such as URL query parameters.
+export const isCategory = (value: string | null): value is Category =>
+  CATEGORIES.some((category) => category === value)
 
 export const filterByCategory = (
   recipes: Recipe[],

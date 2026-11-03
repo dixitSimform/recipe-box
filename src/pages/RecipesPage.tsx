@@ -1,21 +1,19 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import type { ReactElement } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import { Button } from '../components/Button'
 import { List } from '../components/List'
 import { RecipeCard } from '../components/RecipeCard'
 import { RecipeFilters } from '../components/RecipeFilters'
-import { RecipeForm } from '../components/RecipeForm'
-import type { Category, NewRecipe, Recipe } from '../types/recipe'
+import type { Category, Recipe } from '../types/recipe'
 import {
   countFavourites,
   filterByCategory,
-  findById,
+  isCategory,
 } from '../utils/recipeUtils'
 
 export type RecipesPageProps = {
   recipes: Recipe[]
-  onAdd: (data: NewRecipe) => void
-  onUpdate: (id: string, data: NewRecipe) => void
   onRemove: (id: string) => void
   onToggleFavourite: (id: string) => void
   onReset: () => boolean
@@ -23,24 +21,25 @@ export type RecipesPageProps = {
 
 export const RecipesPage = ({
   recipes,
-  onAdd,
-  onUpdate,
   onRemove,
   onToggleFavourite,
   onReset,
 }: RecipesPageProps): ReactElement => {
-  const [search, setSearch] = useState('')
-  const [category, setCategory] = useState<Category | 'all'>('all')
-  const [favouritesOnly, setFavouritesOnly] = useState(false)
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [editingId, setEditingId] = useState<string | null>(null)
+  const navigate = useNavigate()
+  // The filters live in the URL (?q=...&category=...&fav=1), so they survive a refresh,
+  // can be bookmarked, and work with the back button
+  const [searchParams, setSearchParams] = useSearchParams()
+  const search = searchParams.get('q') ?? ''
+  const categoryParam = searchParams.get('category')
+  // The guard narrows the string to a Category; an invalid value falls back to 'all'
+  const category: Category | 'all' = isCategory(categoryParam)
+    ? categoryParam
+    : 'all'
+  const favouritesOnly = searchParams.get('fav') === '1'
 
   // Derived values: recalculated on every render, so they never go out of sync
   const recipeCount = recipes.length
   const favouriteCount = countFavourites(recipes)
-  const editingRecipe =
-    editingId === null ? undefined : findById(recipes, editingId)
-  const isFormShown = isFormOpen || editingRecipe !== undefined
 
   // Derived, not state: only recomputed when recipes or a filter changes
   const visibleRecipes = useMemo(() => {
@@ -54,45 +53,38 @@ export const RecipesPage = ({
       : inCategory
   }, [recipes, search, category, favouritesOnly])
 
-  // Only one form at a time: opening one closes the other
-  const handleOpenAddForm = () => {
-    setEditingId(null)
-    setIsFormOpen(true)
+  // Sets one URL parameter and removes it when the value is empty. Typing replaces the
+  // history entry, so one search does not create one back-button stop per letter.
+  const updateParam = (key: string, value: string, replace = false) => {
+    setSearchParams(
+      (previous) => {
+        const next = new URLSearchParams(previous)
+        if (value === '') {
+          next.delete(key)
+        } else {
+          next.set(key, value)
+        }
+        return next
+      },
+      { replace },
+    )
   }
 
-  // The setters never change, so memo(RecipeCard) can keep skipping re-renders
-  const handleEdit = useCallback((id: string) => {
-    setIsFormOpen(false)
-    setEditingId(id)
-  }, [])
+  const handleSearchChange = (value: string) => updateParam('q', value, true)
 
-  const handleCloseForm = () => {
-    setIsFormOpen(false)
-    setEditingId(null)
-  }
+  const handleCategoryChange = (value: Category | 'all') =>
+    updateParam('category', value === 'all' ? '' : value)
 
-  const handleAddRecipe = (data: NewRecipe) => {
-    onAdd(data)
-    handleCloseForm()
-  }
+  const handleFavouritesOnlyChange = (value: boolean) =>
+    updateParam('fav', value ? '1' : '')
 
-  const handleSaveEdit = (data: NewRecipe) => {
-    if (editingId === null) return
+  const handleClearFilters = () => setSearchParams({})
 
-    onUpdate(editingId, data)
-    handleCloseForm()
-  }
-
-  const handleReset = () => {
-    // Only close the form when the user confirmed the reset
-    if (onReset()) handleCloseForm()
-  }
-
-  const handleClearFilters = () => {
-    setSearch('')
-    setCategory('all')
-    setFavouritesOnly(false)
-  }
+  // navigate only changes when the path changes, so while filtering memo(RecipeCard) keeps skipping re-renders
+  const handleEdit = useCallback(
+    (id: string) => navigate(`/recipes/${id}/edit`),
+    [navigate],
+  )
 
   const hasRecipes = recipeCount > 0
   const hasNoMatches = hasRecipes && visibleRecipes.length === 0
@@ -104,27 +96,20 @@ export const RecipesPage = ({
         {favouriteCount} {favouriteCount === 1 ? 'favourite' : 'favourites'}
       </p>
       <div className="toolbar">
-        {!isFormShown && <Button onClick={handleOpenAddForm}>Add recipe</Button>}
-        <Button variant="secondary" onClick={handleReset}>
+        <Link className="btn btn-primary" to="/recipes/new">
+          Add recipe
+        </Link>
+        <Button variant="secondary" onClick={onReset}>
           Reset sample data
         </Button>
       </div>
-      {isFormShown && (
-        // The key makes React start a fresh form when you switch to another recipe
-        <RecipeForm
-          key={editingRecipe?.id ?? 'new'}
-          initialRecipe={editingRecipe}
-          onSubmit={editingRecipe ? handleSaveEdit : handleAddRecipe}
-          onCancel={handleCloseForm}
-        />
-      )}
       <RecipeFilters
         search={search}
         category={category}
         favouritesOnly={favouritesOnly}
-        onSearchChange={setSearch}
-        onCategoryChange={setCategory}
-        onFavouritesOnlyChange={setFavouritesOnly}
+        onSearchChange={handleSearchChange}
+        onCategoryChange={handleCategoryChange}
+        onFavouritesOnlyChange={handleFavouritesOnlyChange}
         onClear={handleClearFilters}
       />
       <p className="summary">
