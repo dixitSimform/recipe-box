@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import type { ReactElement } from 'react'
+import { Link } from 'react-router'
 import type { Recipe } from '../types/recipe'
 import { formatIngredient, getTotalTime } from '../utils/recipeUtils'
 import { Button } from './Button'
@@ -29,7 +30,9 @@ const RecipeCardView = ({
   return (
     <Card className="recipe-card">
       <div className="recipe-card-header">
-        <h2>{title}</h2>
+        <h2>
+          <Link to={`/recipes/${id}`}>{title}</Link>
+        </h2>
         {isFavourite && (
           <span className="favourite-star" role="img" aria-label="Favourite">
             ★

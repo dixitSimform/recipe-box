@@ -326,6 +326,52 @@ a.btn {
   font-size: 1.125rem;
 }
 
+.recipe-card-header h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.recipe-card-header h2 a:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.recipe-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.recipe-detail-header h2 {
+  margin: 0;
+}
+
+.recipe-notes {
+  margin: 0 0 1rem;
+  font-style: italic;
+}
+
+.recipe-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.recipe-ingredients,
+.recipe-steps {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.recipe-steps li {
+  margin-bottom: 0.5rem;
+}
+
 .favourite-star {
   color: var(--primary);
 }

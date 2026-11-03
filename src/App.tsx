@@ -5,7 +5,10 @@ import { useRecipes } from './hooks/useRecipes'
 import { DiscoverPage } from './pages/DiscoverPage'
 import { HomePage } from './pages/HomePage'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { RecipeDetailPage } from './pages/RecipeDetailPage'
+import { RecipeIngredients } from './pages/RecipeIngredients'
 import { RecipesPage } from './pages/RecipesPage'
+import { RecipeSteps } from './pages/RecipeSteps'
 
 function App() {
   const { recipes, add, update, remove, toggleFavourite, importMeal, reset } =
@@ -35,6 +38,19 @@ function App() {
             />
           }
         />
+        <Route
+          path="recipes/:id"
+          element={
+            <RecipeDetailPage
+              recipes={recipes}
+              onToggleFavourite={toggleFavourite}
+            />
+          }
+        >
+          {/* Nested routes render inside RecipeDetailPage's <Outlet /> */}
+          <Route index element={<RecipeIngredients />} />
+          <Route path="steps" element={<RecipeSteps />} />
+        </Route>
         <Route
           path="discover"
           element={<DiscoverPage recipes={recipes} onImport={importMeal} />}
